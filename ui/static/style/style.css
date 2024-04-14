@@ -1,0 +1,479 @@
+/*Общее*/
+
+body {
+    font: 12pt Arial, Helvetica, sans-serif;
+    margin: 0;
+    color: gray;
+}
+
+a {
+    color: #00796B;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#header {
+    background: #00897B;
+}
+
+#footer {
+    text-align: center;
+}
+
+button, input[type="button"],
+input[type="submit"] {
+    background: #26A69A;
+    border: 0;
+    cursor: pointer;
+    color: white;
+    padding: 0.5em;
+    border-radius: 0.3em;
+}
+
+button:hover, input[type="button"]:hover,
+input[type="submit"]:hover {
+    background: #009688;
+}
+
+#lenta {
+    margin: 1em 0;
+}
+
+#meso,
+#mesp {
+    color: black;
+    line-height: 1.5;
+}
+
+.sim {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: auto;
+    height: 100%;
+    user-select: none;
+}
+
+.lim {
+    display: inline;
+}
+
+.ms {
+    color: #e8fffc;
+}
+
+.ms:hover {
+    color: white;
+    text-decoration: none;
+    background: #00796B;
+}
+
+.main-text {
+    font-weight: bold;
+    color: #00796B;
+}
+
+#profile-avatar {
+    width: 90%;
+    height: 90%;
+    border: 1px solid rgba(128, 128, 128, 0.56);
+    cursor: pointer;
+    user-select: none;
+}
+
+hr {
+    border: 1px dashed #ccc;
+}
+
+#scroll-but {
+    display: none;
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    text-align: center;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em;
+    background: #26a69ab8;
+    border-radius: 0.3em;
+    color: white;
+    z-index: 5;
+    line-height: 0;
+}
+
+#scroll-but:hover {
+    background: #26A69A;
+    color: #e8fffc;
+}
+
+#scroll-but>svg {
+    width: 2em;
+    height: 2em;
+    display: block;
+}
+
+#finder {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-left: 0;
+    padding: 0.5%;
+}
+
+.comment_item {
+    overflow: hidden;
+}
+
+.next_news_box {
+    text-align: center;
+    cursor: pointer;
+    color: #00796B;
+    background: rgba(0, 150, 136, 0.18);
+    margin: 1em 0.5em 0 0.5em;
+    padding: 0.5em;
+}
+
+#box {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    display: none;
+    background: rgba(128, 128, 128, 0.48);
+    overflow: auto;
+}
+
+#bimg {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 85%;
+    max-height: 85%;
+    user-select: none;
+}
+
+#lenta-box {
+    background: #009688;
+    color: #e8fffc;
+    padding: 0.7%;
+}
+
+#closebox {
+    position: fixed;
+    z-index: 5;
+    right: 0;
+    top: 0;
+}
+
+.head-text {
+    text-indent: 1em;
+    line-height: 2;
+    font-weight: bold;
+}
+
+#profile {
+    margin-bottom: 1%;
+    overflow: hidden;
+    line-height: 2;
+}
+
+#profile-right {
+    margin-left: 20%;
+}
+
+.news-info {
+    position: relative;
+    word-wrap: break-word;
+}
+
+.news-avatar {
+    display: block;
+    border-radius: 50%;
+    border: 1px solid rgba(128, 128, 128, 0.56);
+    float: left;
+    user-select: none;
+}
+
+.author {
+    font-weight: bold;
+}
+
+.delete_item {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 0.25em;
+    cursor: pointer;
+}
+
+.delete_item > svg {
+    width: 1em;
+    height: 1em;
+    color: #9E9E9E;
+}
+
+.delete_item > svg:hover {
+    color: #838383;
+}
+
+.date_text {
+    display: inline;
+    color: gray;
+    font-size: 0.9em;
+}
+
+.comment_link {
+    font-size: 1em;
+}
+
+.comment-avatar {
+    float: left;
+}
+
+.comment-info {
+    overflow: hidden;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.delete_comment {
+    font-size: 0.9em;
+}
+
+.comment-form {
+    padding-left: 0;
+}
+
+.info-text {
+    text-align: center;
+    color: gray;
+}
+
+.comment-box {
+    cursor: pointer;
+    color: green;
+}
+
+.title-box {
+    text-align: center;
+    padding: 0.5%;
+}
+
+.find-box {
+    text-align: center;
+    overflow: hidden;
+}
+
+.find-form {
+    margin: 0;
+    padding: 0;
+}
+
+.user-avatar {
+    float: left;
+    cursor: pointer;
+}
+
+.input_box {
+    text-align: left;
+    width: 50%;
+    margin: auto;
+    line-height: 2;
+}
+
+.input-text {
+    text-indent: 1em;
+    color: green;
+    display: inline;
+}
+
+input,
+textarea {
+    outline: none;
+}
+
+.avatar-edit {
+    max-width: 100%;
+    vertical-align: bottom;
+}
+
+.elink {
+    padding: 1.5%;
+}
+
+.elink:hover {
+    background: #00796b17;
+    text-decoration: none;
+    border-radius: 0.3em;
+}
+
+.owner,
+.user {
+    display: none;
+}
+
+.owner.visible,
+.user.visible {
+    display: block;
+}
+
+#head_username {
+    text-indent: 1em;
+    line-height: 2;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+.photo-box {
+    position: relative;
+    width: 30vw;
+    height: 30vw;
+    overflow: hidden;
+}
+
+.photo {
+    transition-property: transform;
+    transition-duration: 1s;
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.photo.active {
+    z-index: 1;
+}
+
+.photo-box-radio {
+    position: absolute;
+    bottom: 0.25em;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 1;
+}
+
+.photo-radio {
+    width: 0.75em;
+    height: 0.75em;
+    border-radius: 50%;
+    background: #efeaea;
+    opacity: 0.75;
+    display: inline-block;
+    margin: 0.25em;
+    cursor: pointer;
+}
+
+.photo-radio.active {
+    background: #458779;
+}
+
+.arrow {
+    position: absolute;
+    width: 1.5em;
+    height: 1.5em;
+    margin: auto 0;
+    background: white;
+    z-index: 6;
+    top: 0;
+    bottom: 0;
+    opacity: 0.5;
+    cursor: pointer;
+    border-radius: 50%;
+    user-select: none;
+}
+
+.arrow:hover {
+    opacity: 0.7;
+}
+
+.arrow>svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #001f19;
+}
+
+#dialogs-cont {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+}
+
+#dialogs-cont>div {
+    display: none;
+    position: relative;
+    width: fit-content;
+    min-width: 10vw;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    padding: 0.65em;
+    background: white;
+    color: #565656;
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 0.85em;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 10%), 0 0 7px rgb(0 0 0 / 6%);
+    border: 1px solid #ccc;
+    border-radius: 0.5em;
+}
+
+#dialogs-cont input {
+    padding: 0.65em;
+    color: #565656;
+    font-weight: bold;
+    user-select: none;
+    border: 1px solid #ccc;
+    border-radius: 0.5em;
+}
+
+#dialogs-cont button {
+    padding: 0.65em;
+    border-radius: 0.5em;
+    font-weight: bold;
+    user-select: none;
+}
+
+textarea {
+    padding: 0.5em;
+    border-radius: 0.3em;
+}
+
+.rounded {
+    border-radius: 0.3em;
+}
+
+.rounded-top {
+    border-radius: 0.3em 0.3em 0 0;
+}
+
+.rounded-bottom {
+    border-radius: 0 0 0.3em 0.3em;
+}

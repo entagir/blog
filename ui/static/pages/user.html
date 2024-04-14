@@ -1,0 +1,73 @@
+<div id="head">
+    <p id="head_username"></p>
+</div>
+
+<div id="profile" class="material-box">
+    <div id="profile-left">
+        <img src="" id="profile-avatar" class="rounded" alt="profile-avatar"
+            onclick="lightbox(getUserAvatarLink(currentUser.avatar, 'f'));">
+
+        <div id="owner-profile-form" class="owner">
+            <a href="javascript:void(0);" id="owner-profile-form_edit-page" class="elink">Edit page</a><br>
+            <a href="javascript:void(0);" id="owner-profile-form_edit-avatar" class="elink">Change avatar</a>
+
+            <form id="edit-avatar-form" onclick="event.stopPropagation();"
+                enctype="multipart/form-data" style="display: none;">
+                <input type="hidden" name="MAX_FILE_SIZE" value="500000">
+                <input name="avatar" type="file" accept="image/jpeg, image/png" id="edit-avatar-form_file"
+                    style="display:none;">
+            </form>
+        </div>
+    </div>
+
+    <div id="profile-right">
+        <p id="profile-right_username" class="main-text"></p>
+        <p id="profile-right_info"></p>
+    </div>
+</div>
+
+<div id="lenta">
+    <div id="module-news" class="material-box rounded">
+        <p id="lenta-box" class="rounded" onclick="event.stopPropagation();">There are no posts here yet</p>
+
+        <div id="owner-news-form" class="owner">
+            <form id="add-news-form" onclick="event.stopPropagation();"
+                enctype="multipart/form-data">
+                <textarea id="add-news-form-textarea" placeholder="Text (optional)" rows="3" name="text"></textarea>
+
+                <div id="add-news-form-controls" style="display:none;line-height:2;">
+                    <input type="hidden" name="MAX_FILE_SIZE" value="500000">
+                    <input id="mfile" name="img" type="file" accept="image/jpeg, image/png" multiple
+                        style="display:none;">
+
+                    <input type="button" value="Add image" onclick="mfile.click();"><br>
+                    <input type="button" value="Post" onclick="addNews();">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="news_container"></div>
+    <div id="next_news_box" class="next_news_box rounded hidden"></div>
+    <div id="create_news_box"  class="next_news_box rounded hidden"></div>
+</div>
+
+<div id="dialogs-cont">
+    <div id="dialog-user-info-change" class="top">
+        <form style="text-align: center;">
+            <p>Edit page</p><br>
+            <label style="display: flex;align-content: center;justify-content: center;align-items: center;">Info: <input
+                    id="input-user-info" type="text" autocomplete="off" style="margin-left: 0.5rem;"></label><br>
+            <button id="edit-page">Save</button><br><br>
+            <a href="javascript:void(0);" id="delete-page" class="comment_link">Delete page</a>
+        </form>
+    </div>
+
+    <div id="dialog-user-avatar-change" class="top">
+        <form style="text-align: center;">
+            <p>Edit avatar</p><br>
+            <button id="edit-avatar">Open</button><br><br>
+            <a href="javascript:void(0);" id="delete-avatar" class="comment_link hidden">Delete avatar</a>
+        </form>
+    </div>
+</div>

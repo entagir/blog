@@ -1,0 +1,25 @@
+/*@media screen and (min-device-width:420px) and (max-device-width:800px){ Для телефонов побольше и превернутых*/
+
+#profile-left{
+ width:30%;
+ float:left;
+ text-align:center;
+ max-height:30%;
+ }
+
+#hmenu{
+ padding:1%;
+ }  
+
+#lenta-box{
+padding:1%;
+}
+
+.yvi{
+ max-width:70%;
+ }
+
+#user_list{
+ padding:0.5%;
+ }
+

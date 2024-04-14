@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+    <title>Blog</title>
+
+    <link href="/static/style/style.css" rel="stylesheet">
+    <link href="/static/style/screen.css" rel="stylesheet" media="only screen and (min-width:800px)">
+    <link href="/static/style/phone.css" rel="stylesheet" media="only screen and (max-width:800px)">
+    <link href="/static/style/bphone.css" rel="stylesheet" media="only screen and (orientation: landscape) and (max-width:800px)">
+    <link href="/static/style/bphone.css" rel="stylesheet" media="only screen and (min-width:420px) and (max-width:800px)">
+    <link href="/static/style/mphone.css" rel="stylesheet" media="only screen and (max-width:420px)">
+
+    <link href="/static/img/favicon.ico" rel="icon" type="image/png" >
+    
+    <script src="/static/script/router.js"></script>
+    <script src="/static/script/index.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="scroll-but">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+            </svg>
+        </div>
+
+        <div id="header" class="rounded-top">
+            <ul id="hmenu">
+                <li class="lim"><a href="/" class="ms" data-link>Blog</a></li>
+                <li class="lim"><a href="/people" class="ms" data-link>Peoples</a></li>
+                <li class="lim"><a href="/logout" class="ms" data-link>Logout</a></li>
+            </ul>
+        </div>
+
+        <div id="page" class="rounded-bottom"></div>
+
+        <div id="footer">
+            <a href="/id1" data-link>Tagir Enikeev</a>
+        </div>
+    </div>
+
+    <div id="box"><img src="#bimg" id="bimg" onclick="event.stopPropagation();" alt="full image"></div>
+</body>
+
+</html>

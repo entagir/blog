@@ -1,0 +1,140 @@
+/*@media screen and (min-device-width:800px){ Для компов*/
+
+#container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+#hmenu {
+    margin: 0px;
+    position: relative;
+    padding: 1%;
+}
+
+#head {
+    background: rgba(211, 215, 207, 0.32);
+}
+
+#profile {
+    margin-top: 1%;
+}
+
+.ms {
+    padding: 1%;
+}
+
+form {
+    padding: 0.5%;
+}
+
+#add-news-form-textarea {
+    width: 99%;
+    resize: none;
+}
+
+#news_container {
+    color: black;
+    line-height: 1.5;
+    padding: 0 0.5em;
+}
+
+#profile-left {
+    width: 20%;
+    float: left;
+    text-align: center;
+}
+
+@media screen and (max-device-width:1250px) {
+    #profile-left {
+        width: 30%;
+        float: left;
+        text-align: center;
+    }
+}
+
+.tpol {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.tarea {
+    width: 100%;
+    padding-top: 1.1%;
+    padding-bottom: 1.1%;
+    margin-top: 1.1%;
+    margin-bottom: 1.1%;
+    border: 1px solid #CCC;
+}
+
+.news_item {
+    overflow-y: hidden;
+}
+
+.news-info {
+    margin-left: 5.5%;
+}
+
+.comment-info {
+    margin-left: 5.5%;
+}
+
+.news-avatar {
+    width: 5%;
+}
+
+.comment-avatar {
+    width: 5%;
+    border-radius: 5%;
+}
+
+#module-news {
+    background: rgba(211, 215, 207, 0.32);
+    text-align: center;
+    margin: 0 0.5em 1em 0.5em;
+}
+
+#page {
+    border-right: 1px solid #CACACA;
+    border-left: 1px solid #CACACA;
+    border-bottom: 1px solid #CACACA;
+}
+
+.yvi {
+    max-width: 70%;
+}
+
+.user-avatar {
+    width: 10%;
+}
+
+.user-info {
+    padding-left: 11%;
+}
+
+.user_item {
+    overflow-y: hidden;
+}
+
+#user_list {
+    padding: 0.5%;
+}
+
+.newc {
+    width: 40%;
+    resize: none;
+}
+
+.comment-box {
+    background: rgba(187, 230, 187, 0.66);
+    margin-bottom: 0.3%;
+    padding-left: 0.2%;
+}
+
+#menu-button,
+#mmenu {
+    display: none;
+}
+
+#menu-box {
+    display: none;
+}
