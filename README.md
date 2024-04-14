@@ -1,6 +1,6 @@
 <h1 align="center">Blog</h1>
 
-<img src="https://blog.entagir.xyz/img/blog1.png">
+<img src="https://entagir.xyz/img/blog1.png">
 
 
 <h2 align="center"><a  href="https://blog.entagir.xyz">blog.entagir.xyz</a></h2>
