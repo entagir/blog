@@ -1,5 +1,6 @@
-const imgFormat = 'png';
-const defaultAvatar = 'c6312289-d30d-4456-acdf-6efd18677e84';
+const imgFormat = `png`;
+const defaultAvatar = `c6312289-d30d-4456-acdf-6efd18677e84`;
+const photoThumbnail = `${window.location.href}#`;
 
 let scrollBut, boxElem;
 

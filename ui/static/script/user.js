@@ -1,4 +1,4 @@
-if (document.readyState == 'loading') {
+if (document.readyState === 'loading') {
     window.addEventListener('load', init);
 } else {
     init();
@@ -7,13 +7,15 @@ if (document.readyState == 'loading') {
 async function init() {
     $('body').addEventListener('click', minimizePostForm);
     $('#dialogs-cont').addEventListener('mousedown', function (e) {
-        if (e.target == this) showDialog();
+        if (e.target === this) {
+            showDialog();
+        }
     });
     $('.next_news_box').addEventListener('click', getNews);
     $('#add-news-form-textarea').addEventListener('click', maximizePostForm);
 
     const url = window.location.href;
-    const id = url.split('id')[1];
+    const id = parseInt(url.split('id')[1]);
 
     currentUser = {
         id: 0,
@@ -27,17 +29,19 @@ async function init() {
         newsLastId: 0
     };
 
-    if (!id || !id.length) return;
+    if (typeof(id) !== 'number') {
+        return;
+    }
 
     const haveUser = await getCurrentUserData(id);
     if (!haveUser) return;
-    
+
     currentUser.id = id;
 
     if (user.id) {
         showUserPage();
 
-        if (user.id == id) {
+        if (user.id === id) {
             showOwnerPage();
         }
     }
@@ -57,13 +61,15 @@ async function init() {
     $('#delete-avatar').addEventListener('click', deleteAvatar);
 
     const forms = document.querySelectorAll('form');
-    for (let i of forms) {
+    for (const i of forms) {
         i.addEventListener('submit', function (e) { e.preventDefault(); });
     }
 }
 
 async function editAvatarFileHandler() {
-    if (!$('#edit-avatar-form_file').value) return false;
+    if (!$('#edit-avatar-form_file').value) {
+        return false;
+    }
 
     const form = $('#edit-avatar-form');
     const formData = new FormData(form);
@@ -74,7 +80,7 @@ async function editAvatarFileHandler() {
             body: formData,
         });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             const resJSON = await response.json();
             currentUser.avatar = resJSON.avatar;
 
@@ -112,7 +118,7 @@ async function deleteAvatar() {
             method: 'DELETE'
         });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             const resJSON = await response.json();
             currentUser.avatar = resJSON.avatar;
 
@@ -131,7 +137,9 @@ async function deleteAvatar() {
 
 function editPageHandler() {
     const textArea = $('#input-user-info');
-    if (!textArea) return false;
+    if (!textArea) {
+        return false;
+    }
     textArea.value = currentUser.description;
 
     showDialog('user-info-change');
@@ -139,10 +147,14 @@ function editPageHandler() {
 
 async function updateUserInfo() {
     const textArea = $('#input-user-info');
-    if (!textArea) return false;
+    if (!textArea) {
+        return false;
+    }
 
     const newsText = textArea.value;
-    if (!newsText.length) return false;
+    if (!newsText.length) {
+        return false;
+    }
 
     const bodyJSON = {
         description: newsText
@@ -157,9 +169,11 @@ async function updateUserInfo() {
             body: JSON.stringify(bodyJSON)
         });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             const resJSON = await response.json();
-            if (resJSON.description) currentUser.description = resJSON.description;
+            if (resJSON.description) {
+                currentUser.description = resJSON.description;
+            }
 
             $('#profile-right_info').innerHTML = getUserInfo(currentUser.description);
 
@@ -194,12 +208,14 @@ function getUserInfo(info) {
 }
 
 async function getCurrentUserData(id) {
-    if (!id) return {};
+    if (!id) {
+        return {};
+    }
 
     try {
         const response = await fetch(`/api/users/${id}`);
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             const json = await response.json();
 
             currentUser.name = json.name;
@@ -241,7 +257,9 @@ async function addNews() {
     const newsText = textArea.value;
 
     // Text and Img check
-    if (!newsText.length && !fileImage.value.length) return false;
+    if (!newsText.length && !fileImage.value.length) {
+        return false;
+    }
 
     const formData = new FormData(form);
 
@@ -251,7 +269,7 @@ async function addNews() {
             body: formData,
         });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             const resJSON = await response.json();
 
             insertNews(resJSON, 'before');
@@ -283,7 +301,7 @@ async function deleteNews(newsId) {
             method: 'DELETE'
         });
 
-        if (response.status == 204) {
+        if (response.status === 204) {
             const newsItemDiv = $(`#news${newsId}`);
             if (newsItemDiv) {
                 if (newsItemDiv.nextElementSibling) {
@@ -320,15 +338,17 @@ async function getNews() {
         const res = await fetch(`/api/news/user/${currentUser.id}?part=${currentUser.newsPartLoaded}&start=${currentUser.newsLastId}`);
         const resJSON = await res.json();
 
-        if (res.status == 200 && resJSON.length) {
+        if (res.status === 200 && resJSON.length) {
             insertNews(resJSON);
 
             currentUser.newsPartLoaded++;
             currentUser.newsCountLoaded += resJSON.length;
-            if (!currentUser.newsLastId) currentUser.newsLastId = resJSON[0].id;
+            if (!currentUser.newsLastId) {
+                currentUser.newsLastId = resJSON[0].id;
+            }
         }
 
-        if (currentUser.newsCountLoaded == currentUser.newsCount) {
+        if (currentUser.newsCountLoaded === currentUser.newsCount) {
             nextBox.classList.toggle('hidden', true);
 
             if (!currentUser.newsCount) {
@@ -349,7 +369,7 @@ function insertNews(news, position = 'after') {
         return false;
     }
 
-    if (position == 'before') {
+    if (position === 'before') {
         news.reverse();
     }
 
@@ -360,20 +380,22 @@ function insertNews(news, position = 'after') {
         if (item.comments) {
             commentsBadge = ` (${item.comments})`;
         }
+
         let photoBlock = '';
         if (item.photos && item.photos.length) {
             let photosElems = '';
             let photosRadio = '';
 
             for (const [i, photo] of item.photos.entries()) {
+                const src = `/uploads/${photo}.${imgFormat}`;
                 photosElems += `
-					<div class="photo${i == 0 ? ' active' : ''}" data-photo="${i}" style="transform: translate(${i * 100}%, 0)">
-						<img class="sim rounded" src="/uploads/${photo}.${imgFormat}" alt="posts image" onclick="lightbox(this.src);">
+					<div class="photo${i === 0 ? ' active' : ''}" data-photo="${i}" style="transform: translate(${i * 100}%, 0)">
+						<img class="sim rounded" src="${i === 0 ? src : photoThumbnail}" data-src="${src}" alt="posts image" loading="lazy" onclick="lightbox(this.src);">
 					</div>
 				`;
 
                 photosRadio += `
-                    <div class="photo-radio${i == 0 ? ' active' : ''}" data-photo="${i}"></div>
+                    <div class="photo-radio${i === 0 ? ' active' : ''}" data-photo="${i}"></div>
                 `;
             }
 
@@ -409,7 +431,7 @@ function insertNews(news, position = 'after') {
 			<img src="${avatarLink}" class="news-avatar" alt="news item avatar">
 			<div class="news-info">
 				<a href='/id${currentUser.id}' class="author"  data-link>${currentUser.name} ${currentUser.lastname}</a>
-                <div class="delete_item owner${currentUser.id == user.id ? ' visible' : ''}" onclick="deleteNews(${item.id});">
+                <div class="delete_item owner${currentUser.id === user.id ? ' visible' : ''}" onclick="deleteNews(${item.id});">
                     <svg fill="currentColor"><title>delete post</title><use xlink:href="/static/img/bootstrap-icons.svg#trash3-fill" /></svg>
                 </div>
 				<br>
@@ -462,14 +484,14 @@ function insertNews(news, position = 'after') {
 
         const newsContainer = $('#news_container');
 
-        if (position == 'after') {
+        if (position === 'after') {
             if (currentUser.newsCountLoaded > 0 || i > 0) {
                 newsContainer.append(newsItemSeparator);
             }
 
             newsContainer.append(newsItemDiv);
         }
-        if (position == 'before') {
+        if (position === 'before') {
             if (currentUser.newsCountLoaded > 0 || i > 0) {
                 newsContainer.prepend(newsItemSeparator);
             }
@@ -479,88 +501,25 @@ function insertNews(news, position = 'after') {
     }
 }
 
-function photoBoxChange(photoBoxId, photoId) {
-    const photoBox = $(`.photo-box[data-photobox="${photoBoxId}"]`);
-
-    let activePhoto = photoBox.querySelector('.photo.active');
-    activePhoto.classList.remove('active');
-
-    const photo = photoBox.querySelector('.photo[data-photo="' + photoId + '"]');
-    photo.classList.add('active');
-
-    let activeRadio = photoBox.querySelector('.photo-radio.active');
-    activeRadio.classList.remove('active');
-
-    const radio = photoBox.querySelector('.photo-radio[data-photo="' + photoId + '"]');
-    radio.classList.add('active');
-
-    for (const [i, photoElem] of photoBox.querySelectorAll('.photo').entries()) {
-        photoElem.style.transform = `translate(${(i - photoId) * 100}%, 0)`;
-    }
-}
-
-function photoBlockNext(e) {
-    const elem = e.currentTarget;
-
-    const photoBox = elem.parentElement;
-    const activePhoto = photoBox.querySelector('.photo.active');
-    const count = photoBox.querySelectorAll('.photo').length;
-    const currentNum = parseInt(activePhoto.dataset.photo);
-
-    if (currentNum + 1 == count) {
-        return false;
-    }
-
-    photoBoxChange(photoBox.dataset.photobox, currentNum + 1);
-
-    const photoBoxBack = photoBox.querySelector('.arrow.back');
-    const photoBoxNext = photoBox.querySelector('.arrow.next');
-
-    photoBoxBack.style.display = 'block';
-
-    if (currentNum + 2 == count) {
-        photoBoxNext.style.display = 'none';
-    } else {
-        photoBoxNext.style.display = 'block';
-    }
-}
-
-function photoBlockBack(e) {
-    const elem = e.currentTarget;
-
-    const photoBox = elem.parentElement;
-    const activePhoto = photoBox.querySelector('.photo.active');
-    const currentNum = parseInt(activePhoto.dataset.photo);
-
-    if (currentNum - 1 < 0) {
-        return false;
-    }
-
-    photoBoxChange(photoBox.dataset.photobox, currentNum - 1);
-
-    const photoBoxBack = photoBox.querySelector('.arrow.back');
-    const photoBoxNext = photoBox.querySelector('.arrow.next');
-
-    if (currentNum - 1 == 0) {
-        photoBoxBack.style.display = 'none';
-    } else {
-        photoBoxBack.style.display = 'block';
-    }
-
-    photoBoxNext.style.display = 'block';
-}
-
 async function addComment(news_id) {
-    if (!news_id) return false;
+    if (!news_id) {
+        return false;
+    }
 
     const cont = $(`#news-comment-form${news_id}`);
-    if (!cont) return false;
+    if (!cont) {
+        return false;
+    }
 
     const textArea = cont.querySelector('.newc');
-    if (!textArea) return false;
+    if (!textArea) {
+        return false;
+    }
 
     const newsText = textArea.value;
-    if (!newsText.length) return false;
+    if (!newsText.length) {
+        return false;
+    }
 
     const bodyJSON = {
         newsId: news_id,
@@ -576,19 +535,23 @@ async function addComment(news_id) {
             body: JSON.stringify(bodyJSON)
         });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             const resJSON = await response.json();
 
             insertComments(news_id, resJSON);
             //newsPackage++;
             const commentsContainer = $(`#news-comment-container${news_id}`);
-            if (!commentsContainer) return;
+            if (!commentsContainer) {
+                return;
+            }
             const newsConmmentsLoaded = parseInt(commentsContainer.dataset.loaded);
 
             commentsContainer.dataset.loaded = newsConmmentsLoaded + resJSON.length;
 
             const newsContainer = $(`#news${news_id}`);
-            if (!newsContainer) return;
+            if (!newsContainer) {
+                return;
+            }
 
             const newsCommentLink = newsContainer.querySelector('.comment_link');
             newsCommentLink.innerHTML = `Comments (${commentsContainer.dataset.loaded})`;
@@ -605,7 +568,9 @@ async function addComment(news_id) {
 
 async function getComments(news_id) {
     const commentsContainer = $(`#news-comment-container${news_id}`);
-    if (!commentsContainer) return;
+    if (!commentsContainer) {
+        return;
+    }
 
     const nextBox = commentsContainer.querySelector('.comment_load_link');
     nextBox.innerHTML = 'Loading comments ···';
@@ -620,14 +585,16 @@ async function getComments(news_id) {
         const res = await fetch(`/api/comments/news/${news_id}?part=${commentsPartLoaded}&start=${commentsLastId}`);
         const resJSON = await res.json();
 
-        if (res.status == 200 && resJSON.length) {
+        if (res.status === 200 && resJSON.length) {
             insertComments(news_id, resJSON);
 
             commentsContainer.dataset.partLoaded = commentsPartLoaded + 1;
             commentsContainer.dataset.loaded = commentsLoaded + resJSON.length;
-            if (!commentsLastId) commentsContainer.dataset.lastId = resJSON[0].id;
+            if (!commentsLastId) {
+                commentsContainer.dataset.lastId = resJSON[0].id;
+            }
 
-            if (parseInt(commentsContainer.dataset.loaded) == commentsCount) {
+            if (parseInt(commentsContainer.dataset.loaded) === commentsCount) {
                 nextBox.classList.toggle('hidden', true);
             }
         }
@@ -644,7 +611,7 @@ async function deleteComment(commId) {
             method: 'DELETE'
         });
 
-        if (response.status == 204) {
+        if (response.status === 204) {
             const commentItemDiv = $(`#cid${commId}`);
             if (commentItemDiv) {
                 if (commentItemDiv.previousElementSibling) {
@@ -670,7 +637,7 @@ function insertComments(news_id, comments, position = 'after') {
     const commentsContainerBody = $(`#news-comments${news_id}`);
     if (!commentsContainerBody) return false;
 
-    if (position == 'before') {
+    if (position === 'before') {
         comments.reverse();
     }
 
@@ -683,7 +650,7 @@ function insertComments(news_id, comments, position = 'after') {
             <img src="${avatarLink}" class="comment-avatar" alt="comment-avatar">
             <div class="comment-info">
                 <a href="/id${item.userId || user.id}" data-link>${item.userName || user.name} ${item.userLastName || user.lastname}</a>
-                <div class="delete_item delete_comment owner ${(item.userId == user.id) ? 'user' : ''} ${(currentUser.id == user.id || item.userId == user.id) ? ' visible' : ''}" onclick="deleteComment(${item.id});">
+                <div class="delete_item delete_comment owner ${(item.userId === user.id) ? 'user' : ''} ${(currentUser.id === user.id || item.userId === user.id) ? ' visible' : ''}" onclick="deleteComment(${item.id});">
                     <svg fill="currentColor"><title>delete comment</title><use xlink:href="/static/img/bootstrap-icons.svg#trash3-fill" /></svg>
                 </div>
                 <br>
@@ -701,12 +668,12 @@ function insertComments(news_id, comments, position = 'after') {
 
         const commentItemSeparator = document.createElement('hr');
 
-        if (position == 'after') {
+        if (position === 'after') {
             commentsContainerBody.append(commentItemSeparator);
 
             commentsContainerBody.append(commentItemDiv);
         }
-        if (position == 'before') {
+        if (position === 'before') {
             commentsContainerBody.prepend(commentItemSeparator);
 
             commentsContainerBody.prepend(commentItemDiv);
@@ -716,9 +683,93 @@ function insertComments(news_id, comments, position = 'after') {
 
 // UI
 
+function photoBoxChange(photoBoxId, photoId) {
+    const photoBox = $(`.photo-box[data-photobox="${photoBoxId}"]`);
+
+    const activePhoto = photoBox.querySelector('.photo.active');
+    activePhoto.classList.remove('active');
+
+    const photo = photoBox.querySelector('.photo[data-photo="' + photoId + '"]');
+    photo.classList.add('active');
+
+    const activeRadio = photoBox.querySelector('.photo-radio.active');
+    activeRadio.classList.remove('active');
+
+    const radio = photoBox.querySelector('.photo-radio[data-photo="' + photoId + '"]');
+    radio.classList.add('active');
+
+    const photoElems = photoBox.querySelectorAll('.photo');
+    for (const [i, photoElem] of photoElems.entries()) {
+        photoElem.style.transform = `translate(${(i - photoId) * 100}%, 0)`;
+    }
+}
+
+function photoBlockNext(e) {
+    const elem = e.currentTarget;
+
+    const photoBox = elem.parentElement;
+    const activePhoto = photoBox.querySelector('.photo.active');
+    const count = photoBox.querySelectorAll('.photo').length;
+    const currentNum = parseInt(activePhoto.dataset.photo);
+
+    if (currentNum + 1 === count) {
+        return false;
+    }
+
+    const imgElems = photoBox.querySelectorAll('img');
+    for (let i = currentNum + 1; i < imgElems.length; i++) {
+        if (i === currentNum + 3) break;
+
+        const imgElem = imgElems[i];
+        if (imgElem.src !== photoThumbnail) continue;
+
+        imgElem.src = imgElem.dataset.src;
+    }
+
+    photoBoxChange(photoBox.dataset.photobox, currentNum + 1);
+
+    const photoBoxBack = photoBox.querySelector('.arrow.back');
+    const photoBoxNext = photoBox.querySelector('.arrow.next');
+
+    photoBoxBack.style.display = 'block';
+
+    if (currentNum + 2 === count) {
+        photoBoxNext.style.display = 'none';
+    } else {
+        photoBoxNext.style.display = 'block';
+    }
+}
+
+function photoBlockBack(e) {
+    const elem = e.currentTarget;
+
+    const photoBox = elem.parentElement;
+    const activePhoto = photoBox.querySelector('.photo.active');
+    const currentNum = parseInt(activePhoto.dataset.photo);
+
+    if (currentNum - 1 < 0) {
+        return false;
+    }
+
+    photoBoxChange(photoBox.dataset.photobox, currentNum - 1);
+
+    const photoBoxBack = photoBox.querySelector('.arrow.back');
+    const photoBoxNext = photoBox.querySelector('.arrow.next');
+
+    if (currentNum - 1 === 0) {
+        photoBoxBack.style.display = 'none';
+    } else {
+        photoBoxBack.style.display = 'block';
+    }
+
+    photoBoxNext.style.display = 'block';
+}
+
 function showComments(news_id) {
     const commentsContainer = $(`#news-comment-container${news_id}`);
-    if (!commentsContainer) return;
+    if (!commentsContainer) {
+        return;
+    }
     commentsContainer.classList.toggle('hidden');
 
     const newsConmmentsCount = parseInt(commentsContainer.dataset.comments);
@@ -764,7 +815,7 @@ function maximizePostForm() {
 let cid = 0;
 
 function hicomm(cid) {
-    if ($('#hcom' + cid).style.display == "block") {
+    if ($('#hcom' + cid).style.display === "block") {
         $('#hcom' + cid).style.display = "none";
         $('#comment-box_' + cid).innerHTML = "Показать все комментарии";
     } else {
@@ -774,7 +825,7 @@ function hicomm(cid) {
 }
 
 function rcom(x) {
-    if (x.rows == "4") { x.rows = "2"; } else { x.rows = "4"; }
+    if (x.rows === "4") { x.rows = "2"; } else { x.rows = "4"; }
 }
 
 routes['id'].obj = { init: init };
