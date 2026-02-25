@@ -28,6 +28,6 @@ jobs:
         run: go build -o ./build/main ./cmd/web
 
       # Deploy  
-      - run: cd rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./ui/static/ nginx@79.174.86.105:/var/www/blog.entagir.xyz/static/
-      - run: cd rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./build/main nginx@79.174.86.105:/var/www/blog.entagir.xyz/main
+      - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./ui/static/ nginx@79.174.86.105:/var/www/blog.entagir.xyz/static/
+      - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./build/main nginx@79.174.86.105:/var/www/blog.entagir.xyz/main
       - run: ssh nginx@79.174.86.105 pkill -f blog.entagir.xyz && ssh nginx@79.174.86.105 'cd /var/www/blog.entagir.xyz; bash -c "exec -a blog.entagir.xyz ./main &"'
