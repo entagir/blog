@@ -19,6 +19,8 @@ jobs:
       - run: chmod 600 "$HOME/.ssh/id_rsa"
 
       # Build
+      - run: sudo apt update && sudo apt install libjpeg-turbo8 libjpeg-turbo8-dev libturbojpeg0-dev
+
       - name: Go Mod
         run: go mod download
 
