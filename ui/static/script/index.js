@@ -1,5 +1,5 @@
 const imgFormat = `png`;
-const defaultAvatar = `c6312289-d30d-4456-acdf-6efd18677e84`;
+const defaultAvatarLink = `/static/img/avatar`;
 const photoThumbnail = `${window.location.href}#`;
 
 let scrollBut, boxElem;
@@ -31,9 +31,9 @@ async function init() {
     scrollBut = $('#scroll-but');
     boxElem = $('#box');
     window.addEventListener('scroll', onScroll);
-    //document.body.addEventListener('click', nobox);
     scrollBut.addEventListener('click', scrollUp);
     boxElem.addEventListener('click', nobox);
+    document.body.addEventListener('keydown', keyDownHandler);
 
     const cookieId = getCookie('id');
     if (cookieId) {
@@ -49,7 +49,6 @@ async function init() {
         } catch (error) {
 
         }
-
 
         if (user.id) {
             await getUserData(user.id);
@@ -75,31 +74,34 @@ async function getUserData(id) {
 // Utils
 
 function getUserAvatarLink(userAvatar, size = 's') {
-    if (size == 'f') {
-        size = '';
-    } else {
-        size = '_' + size;
-    }
+    size = '_' + size;
 
-    if (!userAvatar) userAvatar = defaultAvatar;
+    if (!userAvatar) {
+        return `${defaultAvatarLink}${size}.png`;
+    }
 
     return `/uploads/${userAvatar}${size}.png`;
 }
 
-function formatDate(date) {
+function formatDate(date, withTime=false) {
     if (!date) return '';
-
     date = new Date(date);
-    let month = new String(date.getMonth() + 1);
-    if (month.length < 2) {
-        month = '0' + month;
+
+    let result = `${formatPart(date.getFullYear())}-${formatPart(date.getMonth() + 1)}-${formatPart(date.getDate())}`;
+
+    if (withTime) {
+        result += ` ${formatPart(date.getHours())}:${formatPart(date.getMinutes())}`;
     }
 
-    let day = new String(date.getDate());
-    if (day.length < 2) {
-        day = '0' + day;
+    return result;
+
+    function formatPart(s) {
+        s = new String(s);
+        if (s.length < 2) {
+            s = '0' + s;
+        }
+        return s;
     }
-    return `${date.getFullYear()}-${month}-${day}`;
 }
 
 function getCookie(name) {
@@ -154,4 +156,10 @@ function lightbox(a) {
 function nobox() {
     document.body.style.overflow = '';
     boxElem.style.display = 'none';
+}
+
+function keyDownHandler(e) {
+	if (e.key === 'Escape') {
+        nobox();
+    }
 }

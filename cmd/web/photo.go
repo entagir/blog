@@ -53,6 +53,14 @@ func NewPhotoBuffer() *PhotoBuffer {
 	}
 }
 
+type ImgSize struct {
+	postfix string
+	size    int
+}
+
+var imgSizesAvatar = []ImgSize{{"_xl", 1000}, {"_d", 300}, {"_s", 100}}
+var imgSizesPost = []ImgSize{{"_xl", 1000}}
+
 func servStorage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -88,7 +96,7 @@ func servStorage(w http.ResponseWriter, r *http.Request) {
 func loadImage(file multipart.File, rl role, date time.Time, avatar bool) (string, error) {
 	// File format validation
 	buff := make([]byte, 512)
-	_, err := (file).Read(buff)
+	_, err := file.Read(buff)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
@@ -99,111 +107,103 @@ func loadImage(file multipart.File, rl role, date time.Time, avatar bool) (strin
 		return "", fmt.Errorf("format error")
 	}
 
-	_, err = (file).Seek(0, io.SeekStart)
+	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
 
+	// DB
 	storeId := uuid.NewString()
 
-	rows, err := db.Query("insert into photos (store_id, user_id, date) values ($1, $2, $3) RETURNING id", storeId, rl.id, date)
+	_, err = db.Query("insert into photos (store_id, user_id, date) values ($1, $2, $3)", storeId, rl.id, date)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
 
-	var photoId int
-	defer rows.Close()
-	if rows.Next() {
-		err = rows.Scan(&photoId)
+	// Storage
+	var imgFile image.Image
+	var buf io.Reader
+
+	switch filetype {
+	case "image/jpeg":
+		imgFile, err = jpeg.Decode(file, &jpeg.DecoderOptions{})
 		if err != nil {
 			fmt.Println(err)
 			return "", err
 		}
 
-	} else {
-		return "", fmt.Errorf("no photo returning")
+		bufTemp := bytes.Buffer{}
+		if err := png.Encode(&bufTemp, imgFile); err != nil {
+			fmt.Println(err)
+			return "", err
+		}
+
+		buf = &bufTemp
+	case "image/png":
+		buf = file
+
+		imgFile, err = png.Decode(file)
+		if err != nil {
+			fmt.Println("png decode ", err)
+			return "", err
+		}
+
+		_, err = file.Seek(0, io.SeekStart)
+		if err != nil {
+			fmt.Println(err)
+			return "", err
+		}
 	}
 
-	if filetype == "image/jpeg" {
-		img, err := jpeg.Decode(file, &jpeg.DecoderOptions{})
-		if err != nil {
-			fmt.Println(err)
-			return "", err
-		}
+	// Original
+	reqSavePhoto(storeId+".png", buf)
 
-		buf := &bytes.Buffer{}
-		if err := png.Encode(buf, img); err != nil {
-			fmt.Println(err)
-			return "", err
-		}
+	// Resize
+	var imgSizes *[]ImgSize = &imgSizesPost
+	if avatar {
+		imgSizes = &imgSizesAvatar
+	}
 
-		reqSavePhoto(storeId+".png", buf)
-
-		if avatar {
-			err = saveImageSamples(storeId, img)
-			if err != nil {
-				fmt.Println(err)
-				return "", err
-			}
-		}
-	} else if filetype == "image/png" {
-		reqSavePhoto(storeId+".png", file)
-
-		if avatar {
-			_, err = (file).Seek(0, io.SeekStart)
-			if err != nil {
-				fmt.Println(err)
-				return "", err
-			}
-			img, err := png.Decode(file)
-			if err != nil {
-				fmt.Println("png decode ", err)
-				return "", err
-			}
-
-			err = saveImageSamples(storeId, img)
-			if err != nil {
-				fmt.Println(err)
-				return "", err
-			}
-		}
+	err = saveImageSamples(storeId, imgFile, *imgSizes)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
 	}
 
 	return storeId, nil
 }
 
-func saveImageSamples(storeId string, img image.Image) error {
-	// Resize [D size]
-	src := imaging.Resize(img, 300, 0, imaging.Lanczos)
-	buf := &bytes.Buffer{}
-	if err := png.Encode(buf, src); err != nil {
-		fmt.Println("d encode ", err)
-		return err
+func saveImageSamples(storeId string, img image.Image, sizes []ImgSize) error {
+	b := img.Bounds()
+	imgWidth := b.Max.X
+	imgHeight := b.Max.Y
+
+	for _, size := range sizes {
+		args := [2]int{size.size, 0}
+		if imgHeight > imgWidth {
+			args[0] = 0
+			args[1] = size.size
+		}
+
+		src := imaging.Resize(img, args[0], args[1], imaging.Lanczos)
+		buf := &bytes.Buffer{}
+		if err := png.Encode(buf, src); err != nil {
+			fmt.Println(size.postfix, " encode ", err)
+			return err
+		}
+
+		name := storeId + size.postfix
+		reqSavePhoto(name+".png", buf)
 	}
-
-	name := storeId + "_d"
-	reqSavePhoto(name+".png", buf)
-
-	// Resize [S size]
-	src = imaging.Resize(img, 100, 0, imaging.Lanczos)
-	buf = &bytes.Buffer{}
-	if err := png.Encode(buf, src); err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	name = storeId + "_s"
-	reqSavePhoto(name+".png", buf)
-
-	// fmt.Println(name)
 
 	return nil
 }
 
 func cleanPhotos(photoIds []string, avatar bool) ([]string, *[]error) {
-	rows, err := db.Query("update photos set deleted=true where store_id=ANY($1) RETURNING store_id", pq.Array(photoIds))
+	query := "update photos set deleted=true where store_id=ANY($1) RETURNING store_id"
+	rows, err := db.Query(query, pq.Array(photoIds))
 	if err != nil {
 		fmt.Println(err)
 		return []string{}, &[]error{err}
@@ -227,9 +227,13 @@ func cleanPhotos(photoIds []string, avatar bool) ([]string, *[]error) {
 
 		rmObject(photoId + ".png")
 
+		sizes := &imgSizesPost
 		if avatar {
-			rmObject(photoId + "_d.png")
-			rmObject(photoId + "_s.png")
+			sizes = &imgSizesAvatar
+		}
+
+		for _, size := range *sizes {
+			rmObject(photoId + size.postfix + ".png")
 		}
 	}
 
@@ -250,7 +254,7 @@ func reqSavePhoto(name string, r io.Reader) {
 func putObject(name string, b []byte) {
 	r := bytes.NewReader(b)
 	info, err := minioClient.PutObject(context.Background(), config.S3.Buckets.Photo, name, r, int64(r.Size()), minio.PutObjectOptions{ContentType: "image/png"})
-	photoBuffer.Delete(name)
+
 	if err != nil {
 		log.Fatalln("put", err, info)
 	} else {

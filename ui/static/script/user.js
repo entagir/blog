@@ -387,7 +387,7 @@ function insertNews(news, position = 'after') {
             let photosRadio = '';
 
             for (const [i, photo] of item.photos.entries()) {
-                const src = `/uploads/${photo}.${imgFormat}`;
+                const src = `/uploads/${photo}_xl.${imgFormat}`;
                 photosElems += `
 					<div class="photo${i === 0 ? ' active' : ''}" data-photo="${i}" style="transform: translate(${i * 100}%, 0)">
 						<img class="sim rounded" src="${i === 0 ? src : photoThumbnail}" data-src="${src}" alt="posts image" loading="lazy" onclick="lightbox(this.src);">
@@ -438,7 +438,7 @@ function insertNews(news, position = 'after') {
 				${textBlock}
 				${photoBlock}
 				<p class="date_text">
-					${formatDate(item.date)}
+					<span title="${formatDate(item.date, true)}">${formatDate(item.date)}</span>
 					 | <a href="javascript:void(0);" class="comment_link" onclick="showComments(${item.id});">Comments${commentsBadge}</a>
 				</p>
 				<br>

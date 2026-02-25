@@ -70,6 +70,7 @@ input[type="submit"]:hover {
 
 .ms {
     color: #e8fffc;
+    user-select: none;
 }
 
 .ms:hover {
@@ -141,6 +142,7 @@ hr {
     background: rgba(0, 150, 136, 0.18);
     margin: 1em 0.5em 0 0.5em;
     padding: 0.5em;
+    user-select: none;
 }
 
 #box {
@@ -239,6 +241,7 @@ hr {
 
 .comment_link {
     font-size: 1em;
+    user-select: none;
 }
 
 .comment-avatar {
@@ -313,6 +316,7 @@ textarea {
 }
 
 .elink {
+    user-select: none;
     padding: 1.5%;
 }
 
@@ -355,7 +359,7 @@ textarea {
 
 .photo {
     transition-property: transform;
-    transition-duration: 1s;
+    transition-duration: 0.5s;
     z-index: 0;
     position: absolute;
     top: 0;
@@ -377,18 +381,18 @@ textarea {
 }
 
 .photo-radio {
-    width: 0.75em;
-    height: 0.75em;
+    width: 0.6em;
+    height: 0.6em;
     border-radius: 50%;
-    background: #efeaea;
-    opacity: 0.75;
+    background: #fff;
+    opacity: 0.4;
     display: inline-block;
     margin: 0.25em;
     cursor: pointer;
 }
 
 .photo-radio.active {
-    background: #458779;
+    opacity: 1;
 }
 
 .arrow {
@@ -400,14 +404,10 @@ textarea {
     z-index: 6;
     top: 0;
     bottom: 0;
-    opacity: 0.5;
+    opacity: 0.8;
     cursor: pointer;
     border-radius: 50%;
     user-select: none;
-}
-
-.arrow:hover {
-    opacity: 0.7;
 }
 
 .arrow>svg {
