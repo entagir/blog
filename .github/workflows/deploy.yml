@@ -30,5 +30,6 @@ jobs:
       # Deploy  
       - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./ui/static/ nginx@79.174.86.105:/var/www/blog.entagir.xyz/static/
       - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./build/main nginx@79.174.86.105:/var/www/blog.entagir.xyz/main
-      - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 "pkill -f blog.entagir.xyz &"
-      - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 'cd /var/www/blog.entagir.xyz; bash -c "exec -a blog.entagir.xyz ./main &"'
+
+      - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 nginx@79.174.86.105 pm2 delete "blog.entagir.xyz"
+      - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 nginx@79.174.86.105 pm2 start main --name "blog.entagir.xyz" --cwd "/var/www/blog.entagir.xyz"
