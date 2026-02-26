@@ -261,16 +261,18 @@ async function addNews() {
         return false;
     }
 
+    $('#owner-news-form .progress-bar').style.width = 0 + '%';
+    $('#owner-news-form .progress-bar').innerHTML = 0 + '%';
+    $('#owner-news-form .progress-container').classList.toggle('hidden', false);
+    $('#add-news-form-controls').classList.toggle('hidden', true);
+
     const formData = new FormData(form);
 
-    try {
-        const response = await fetch('/api/news', {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (response.status === 200) {
-            const resJSON = await response.json();
+    const req = new XMLHttpRequest();
+    req.upload.addEventListener('progress', uploadProgressHandler);
+    req.onloadend = function () {
+        if (req.status === 200 || req.status === 201) {
+            const resJSON = JSON.parse(req.response);
 
             insertNews(resJSON, 'before');
 
@@ -284,15 +286,33 @@ async function addNews() {
 
             $('#lenta-box').innerHTML = `${currentUser.newsCount} entries`;
         } else {
-            console.error(response.status);
+            console.error('err: ', req.status);
         }
-    } catch (error) {
-        console.error('err: ', error.message);
+
+        afterActions();
+    };
+    req.upload.onerror = function() {
+        console.error('err');
+        afterActions();
+    };
+
+    req.open('POST', '/api/news');
+    req.send(formData);
+
+    function afterActions() {
+        $('#owner-news-form .progress-container').classList.toggle('hidden', true);
+        $('#add-news-form-controls').classList.toggle('hidden', false);
+
+        textArea.value = '';
+        $('#mfile').value = '';
+        minimizePostForm();
     }
 
-    textArea.value = '';
-    $('#mfile').value = '';
-    minimizePostForm();
+    function uploadProgressHandler(e) {
+        const p = Math.round(e.loaded / e.total * 100);
+        $('#owner-news-form .progress-bar').style.width = p + '%';
+        $('#owner-news-form .progress-bar').innerHTML = p + '%';
+    }
 }
 
 async function deleteNews(newsId) {
@@ -799,17 +819,13 @@ function showUserPage(container = document) {
 }
 
 function minimizePostForm() {
-    if ($('#add-news-form-textarea')) {
-        $('#add-news-form-controls').style.display = "none";
-        $('#add-news-form-textarea').rows = "3";
-    }
+    $('#add-news-form-controls').classList.toggle('hidden', true);
+    $('#add-news-form-textarea').rows = 3;
 }
 
 function maximizePostForm() {
-    if ($('#add-news-form-controls').style.display != "block") {
-        $('#add-news-form-controls').style.display = "block";
-        $('#add-news-form-textarea').rows = "5";
-    }
+    $('#add-news-form-controls').classList.toggle('hidden', false);
+    $('#add-news-form-textarea').rows = 5;
 }
 
 let cid = 0;

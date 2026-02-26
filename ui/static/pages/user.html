@@ -35,7 +35,11 @@
                 enctype="multipart/form-data">
                 <textarea id="add-news-form-textarea" placeholder="Text (optional)" rows="3" name="text"></textarea>
 
-                <div id="add-news-form-controls" style="display:none;line-height:2;">
+                <div class="progress-container hidden">
+                    <div class="progress-bar" style="width: 0%;">0%</div>
+                </div>
+
+                <div id="add-news-form-controls" class="hidden">
                     <input type="hidden" name="MAX_FILE_SIZE" value="500000">
                     <input id="mfile" name="img" type="file" accept="image/jpeg, image/png" multiple
                         style="display:none;">

@@ -29,7 +29,8 @@ p {
     text-align: center;
 }
 
-button, input[type="button"],
+button,
+input[type="button"],
 input[type="submit"] {
     background: #26A69A;
     border: 0;
@@ -39,7 +40,8 @@ input[type="submit"] {
     border-radius: 0.3em;
 }
 
-button:hover, input[type="button"]:hover,
+button:hover,
+input[type="button"]:hover,
 input[type="submit"]:hover {
     background: #009688;
 }
@@ -223,13 +225,13 @@ hr {
     cursor: pointer;
 }
 
-.delete_item > svg {
+.delete_item>svg {
     width: 1em;
     height: 1em;
     color: #9E9E9E;
 }
 
-.delete_item > svg:hover {
+.delete_item>svg:hover {
     color: #838383;
 }
 
@@ -348,6 +350,28 @@ textarea {
 
 .visible {
     display: block;
+}
+
+#add-news-form-controls {
+    line-height: 2;
+}
+
+.progress-container {
+    width: 100%;
+    background-color: #B2DFDB;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin: 0 auto;
+    user-select: none;
+}
+
+.progress-bar {
+    text-align: center;
+    transition: width 0.4s ease;
+    background: #009688;
+    color: #e8fffc;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
 }
 
 .photo-box {
