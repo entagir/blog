@@ -18,6 +18,9 @@ jobs:
       - run: echo "${{secrets.key}}" > "$HOME/.ssh/id_rsa"
       - run: chmod 600 "$HOME/.ssh/id_rsa"
 
+      - run: mkdir ./build
+      - run: echo "${{secrets.config}}" > "./build/config.json"
+
       # Build
       - run: sudo apt update && sudo apt install libjpeg-turbo8 libjpeg-turbo8-dev libturbojpeg0-dev
 
@@ -30,6 +33,7 @@ jobs:
       # Deploy  
       - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./ui/static/ nginx@79.174.86.105:/var/www/blog.entagir.xyz/static/
       - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./build/main nginx@79.174.86.105:/var/www/blog.entagir.xyz/main
+      - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./build/config.json nginx@79.174.86.105:/var/www/blog.entagir.xyz/config.json
 
       - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 pm2 delete "blog.entagir.xyz"
       - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 pm2 start main --name "blog.entagir.xyz" --cwd "/var/www/blog.entagir.xyz"
