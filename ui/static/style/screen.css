@@ -70,16 +70,12 @@ form {
     overflow-y: hidden;
 }
 
-.news-info {
-    margin-left: 5.5%;
-}
-
 .comment-info {
     margin-left: 5.5%;
 }
 
 .news-avatar {
-    width: 5%;
+    width: 5rem;
 }
 
 .comment-avatar {

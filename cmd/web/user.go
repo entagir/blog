@@ -29,7 +29,9 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := db.QueryRow("select name, lastname, avatar, description, (select count(*) FROM news where user_id=users.id and deleted=false) as comms from users where id=$1 and deleted=false", id)
+	query := `select name, lastname, avatar, description, (select count(*) FROM news 
+	where user_id=users.id and deleted=false) as comms from users where id=$1 and deleted=false`
+	result := db.QueryRow(query, id)
 
 	u := user{}
 	err := result.Scan(&u.Name, &u.Lastname, &u.Avatar, &u.Description, &u.News)
@@ -68,7 +70,8 @@ func partUpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := db.Query("update users set description=$1 where id=$2 RETURNING description", u.Description, rl.id)
+	query := "update users set description=$1 where id=$2 RETURNING description"
+	rows, err := db.Query(query, u.Description, rl.id)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -117,7 +120,10 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.Query("select id, name, lastname, avatar, description from users where deleted=false order by id asc")
+	query := `select id, name, lastname, avatar, description from users 
+	where deleted=false order by id asc`
+
+	rows, err := db.Query(query)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusNotFound)
@@ -228,7 +234,10 @@ func deleteUserAvatar(w http.ResponseWriter, r *http.Request) {
 }
 
 func setUserAvatar(rl role, avatar *string) (user, error) {
-	rows, err := db.Query("update users set avatar=$1 where id=$2 RETURNING id, name, lastname, avatar, (select avatar from users where id=$2) as last_avatar;", avatar, rl.id)
+	query := `update users set avatar=$1 where id=$2 
+	RETURNING id, name, lastname, avatar, (select avatar from users where id=$2) as last_avatar`
+
+	rows, err := db.Query(query, avatar, rl.id)
 	if err != nil {
 		return user{}, err
 	}

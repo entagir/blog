@@ -60,12 +60,17 @@ func getNews(w http.ResponseWriter, r *http.Request) {
 	start := r.URL.Query().Get("start")
 	startId, err := strconv.ParseInt(start, 10, 0)
 
-	var rows *sql.Rows
-	if err != nil || startId == 0 {
-		rows, err = db.Query("select id, text, date, photos, (select count(*) FROM comments where news_id=news.id and deleted=false) as comms from news where user_id=$1 and deleted=false order by date desc limit $2 offset $3", user_id, limit, offset)
-	} else {
-		rows, err = db.Query("select id, text, date, photos, (select count(*) FROM comments where news_id=news.id and deleted=false) as comms from news where user_id=$1 and id<=$4 and deleted=false order by date desc limit $2 offset $3", user_id, limit, offset, startId)
+	args := []any{user_id, limit, offset}
+	query := `select id, text, date, photos, (select count(*) FROM comments 
+	where news_id=news.id and deleted=false) as comms from news where user_id=$1`
+
+	if err == nil && startId != 0 {
+		query += ` and id<=$4`
+		args = append(args, startId)
 	}
+	query += ` and deleted=false order by date desc limit $2 offset $3`
+
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusNotFound)
@@ -149,7 +154,10 @@ func addNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := db.Query("insert into news (user_id, text, date, photos) values ($1, $2, $3, $4) RETURNING id, text, date, photos", rl.id, text, date, pq.Array(photos))
+	query := `insert into news (user_id, text, date, photos) values ($1, $2, $3, $4) 
+	RETURNING id, text, date, photos`
+
+	rows, err := db.Query(query, rl.id, text, date, pq.Array(photos))
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -200,7 +208,10 @@ func deleteNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := db.Query("update news set deleted=true where id=$1 and user_id=$2 and deleted=false RETURNING photos", news_id, rl.id)
+	query := `update news set deleted=true where id=$1 and user_id=$2 and deleted=false 
+	RETURNING photos`
+
+	rows, err := db.Query(query, news_id, rl.id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			//w.WriteHeader(http.StatusForbidden)

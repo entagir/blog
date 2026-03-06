@@ -91,7 +91,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err = db.Query("insert into users (login, password, name, lastname) values ($1, $2, $3, $4)", login, string(hashedPassword), name, lastname); err != nil {
+	query := "insert into users (login, password, name, lastname) values ($1, $2, $3, $4)"
+	if _, err = db.Query(query, login, string(hashedPassword), name, lastname); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

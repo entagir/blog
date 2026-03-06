@@ -41,10 +41,14 @@ func addComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check allow comments for news
+	// TODO: Check allow comments for news
 
 	date := time.Now().UTC()
-	rows, err := db.Query("insert into comments (user_id, news_id, text, date) values ($1, $2, $3, $4) RETURNING id, user_id, text, date", rl.id, c.NewsId, c.Text, date)
+
+	query := `insert into comments (user_id, news_id, text, date) values ($1, $2, $3, $4) 
+	RETURNING id, user_id, text, date`
+
+	rows, err := db.Query(query, rl.id, c.NewsId, c.Text, date)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -104,7 +108,11 @@ func getComments(w http.ResponseWriter, r *http.Request) {
 	}
 	offset *= int64(limit)
 
-	rows, err := db.Query("select comments.id, comments.user_id, comments.text, comments.date, users.name, users.lastname, users.avatar from comments join users on comments.user_id=users.id where news_id=$1 and comments.deleted=false order by comments.date asc limit $2 offset $3", news_id, limit, offset)
+	query := `select comments.id, comments.user_id, comments.text, comments.date, users.name, 
+	users.lastname, users.avatar from comments join users on comments.user_id=users.id 
+	where news_id=$1 and comments.deleted=false order by comments.date asc limit $2 offset $3`
+
+	rows, err := db.Query(query, news_id, limit, offset)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusNotFound)
@@ -160,7 +168,10 @@ func deleteComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = db.Query("update comments set deleted=true where id=$1 and user_id=$2 and deleted=false returning id", comm_id, rl.id)
+	query := `update comments set deleted=true where id=$1 and user_id=$2 and deleted=false 
+	returning id`
+
+	_, err = db.Query(query, comm_id, rl.id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			//w.WriteHeader(http.StatusForbidden)

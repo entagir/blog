@@ -116,7 +116,8 @@ func loadImage(file multipart.File, rl role, date time.Time, avatar bool) (strin
 	// DB
 	storeId := uuid.NewString()
 
-	_, err = db.Query("insert into photos (store_id, user_id, date) values ($1, $2, $3)", storeId, rl.id, date)
+	query := "insert into photos (store_id, user_id, date) values ($1, $2, $3)"
+	_, err = db.Query(query, storeId, rl.id, date)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
@@ -253,7 +254,9 @@ func reqSavePhoto(name string, r io.Reader) {
 
 func putObject(name string, b []byte) {
 	r := bytes.NewReader(b)
-	info, err := minioClient.PutObject(context.Background(), config.S3.Buckets.Photo, name, r, int64(r.Size()), minio.PutObjectOptions{ContentType: "image/png"})
+	info, err := minioClient.PutObject(context.Background(),
+		config.S3.Buckets.Photo, name, r, int64(r.Size()),
+		minio.PutObjectOptions{ContentType: "image/png"})
 
 	if err != nil {
 		log.Fatalln("put", err, info)
@@ -263,7 +266,9 @@ func putObject(name string, b []byte) {
 }
 
 func getObject(name string) *minio.Object {
-	object, err := minioClient.GetObject(context.Background(), config.S3.Buckets.Photo, name, minio.GetObjectOptions{})
+	object, err := minioClient.GetObject(context.Background(),
+		config.S3.Buckets.Photo, name, minio.GetObjectOptions{})
+
 	if err != nil {
 		log.Println(err)
 		return nil
